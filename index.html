@@ -1,0 +1,151 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Jeanly Samudio | Profile Snapshot</title>
+  <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+  <header class="site-header">
+    <div class="container">
+      <a class="brand" href="index.html">Jeanly Samudio</a>
+      <nav class="site-nav">
+        <a href="index.html" class="active">Profile</a>
+        <a href="biodata.html">Biodata</a>
+      </nav>
+    </div>
+  </header>
+
+  <main>
+    <section class="profile-hero">
+      <div class="container">
+        <div class="profile-card reveal">
+          <div class="profile-image">
+            <img src="assets/jeanly-samudio.jpg" alt="Jeanly Samudio smiling at the beach">
+          </div>
+          <div class="profile-content">
+            <span class="greeting">Hello, I’m</span>
+            <h1 class="profile-name">Jeanly Samudio</h1>
+            <p class="tagline">Fourth-year BSIT student who loves creating people-first solutions, learning new tech, and bringing a calm, optimistic energy to every team.</p>
+            <div class="badge-row">
+              <span class="badge">BSIT-4B</span>
+              <span class="badge">Detail-Oriented</span>
+              <span class="badge">Collaborative Spirit</span>
+            </div>
+            <div class="cta-row">
+              <a class="cta" href="biodata.html">View Full Biodata</a>
+              <button class="ghost-btn" id="toggleTheme" type="button">Toggle Dark Mode</button>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section class="highlight highlight-profile">
+      <div class="container">
+        <h2 class="reveal">Snapshot Highlights</h2>
+        <div class="feature-grid">
+          <article class="reveal" data-delay="50">
+            <h3>Tech-Driven Learner</h3>
+            <p>Actively building projects in web and mobile development while sharpening UI intuition and clean code habits.</p>
+          </article>
+          <article class="reveal" data-delay="100">
+            <h3>Grounded &amp; Empathetic</h3>
+            <p>Values listening first, understanding people’s needs, and creating solutions that feel approachable and inclusive.</p>
+          </article>
+          <article class="reveal" data-delay="150">
+            <h3>Future-Focused</h3>
+            <p>Preparing for internships and collaborative tech opportunities that strengthen community connections back home in Iloilo.</p>
+          </article>
+        </div>
+      </div>
+    </section>
+  </main>
+
+  <footer class="site-footer">
+    <div class="container">
+      <p>&copy; <span id="year"></span> Jeanly Samudio. Crafted to spotlight personality and potential.</p>
+    </div>
+  </footer>
+
+  <script>
+    document.getElementById("year").textContent = new Date().getFullYear();
+
+    const THEME_STORAGE_KEY = "jeanly-theme-preference";
+    const toggleThemeButton = document.getElementById("toggleTheme");
+    const setTheme = mode => {
+      const isLight = mode === "light";
+      document.body.classList.toggle("light-theme", isLight);
+      document.body.classList.remove("theme-glow");
+      if (toggleThemeButton) {
+        const label = isLight
+          ? "Toggle Dark Mode (currently off)"
+          : "Toggle Dark Mode (currently on)";
+        toggleThemeButton.textContent = label;
+        toggleThemeButton.setAttribute("aria-pressed", (!isLight).toString());
+      }
+      try {
+        localStorage.setItem(THEME_STORAGE_KEY, isLight ? "light" : "dark");
+      } catch (_) {
+        /* graceful fallback when storage is unavailable */
+      }
+    };
+
+    try {
+      const storedTheme = localStorage.getItem(THEME_STORAGE_KEY);
+      setTheme(storedTheme === "light" ? "light" : "dark");
+    } catch (_) {
+      setTheme("dark");
+    }
+
+    if (toggleThemeButton) {
+      toggleThemeButton.addEventListener("click", () => {
+        const nextTheme = document.body.classList.contains("light-theme") ? "dark" : "light";
+        setTheme(nextTheme);
+      });
+    }
+
+    const reveals = document.querySelectorAll(".reveal");
+    const observer = new IntersectionObserver(
+      entries => {
+        entries.forEach(entry => {
+          if (entry.isIntersecting) {
+            entry.target.classList.add("show");
+            observer.unobserve(entry.target);
+          }
+        });
+      },
+      { threshold: 0.15 }
+    );
+
+    reveals.forEach(el => {
+      const delay = el.dataset.delay;
+      if (delay) {
+        el.style.setProperty("--delay", `${delay}ms`);
+      }
+      observer.observe(el);
+    });
+
+    const profileCard = document.querySelector(".profile-card");
+
+    if (profileCard) {
+      profileCard.addEventListener("mousemove", e => {
+        const rect = profileCard.getBoundingClientRect();
+        const x = ((e.clientX - rect.left) / rect.width - 0.5) * 20;
+        const y = ((e.clientY - rect.top) / rect.height - 0.5) * 20;
+        profileCard.style.setProperty("--tilt-x", `${-y}deg`);
+        profileCard.style.setProperty("--tilt-y", `${x}deg`);
+      });
+
+      profileCard.addEventListener("mouseleave", () => {
+        profileCard.style.setProperty("--tilt-x", "0deg");
+        profileCard.style.setProperty("--tilt-y", "0deg");
+      });
+    }
+
+    // theme toggle handled above
+  </script>
+</body>
+</html>
+
